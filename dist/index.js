@@ -288,15 +288,17 @@ exports.default = function (Bookshelf) {
      * Build a query based on the `filters` parameter.
      * @param  filterValues {object|array}
      */
-    internals.buildFilters = function (filterValues, wherePrefix) {
+    internals.buildFilters = function (filterValues, wherePrefix, filtersEmpty) {
       if ((0, _lodash.isObjectLike)(filterValues) && !(0, _lodash.isEmpty)(filterValues)) {
         // build the filter query
         internals.model.query(function (qb) {
+          var index = 0;
           (0, _lodash.forEach)(filterValues, function (value, key) {
             var whereMethod = wherePrefix;
-            if (whereMethod === 'orWhere' && (0, _lodash.isEmpty)(filterValues)) {
+            if (whereMethod === 'orWhere' && filtersEmpty && !index) {
               whereMethod = 'where';
             }
+            index += 1;
             // If the value is a filter type
             if ((0, _lodash.isObjectLike)(value)) {
               // Format column names of filter types
@@ -342,7 +344,7 @@ exports.default = function (Bookshelf) {
               // Remove all but the last table name, need to get number of dots
               key = internals.formatRelation(internals.formatColumnNames([key])[0]);
 
-              qb[wherePrefix](key, value);
+              qb[whereMethod](key, value);
             }
           });
         });
@@ -569,7 +571,7 @@ exports.default = function (Bookshelf) {
     internals.buildFilters(filter, 'where');
 
     // Apply search
-    internals.buildFilters(search, 'orWhere');
+    internals.buildFilters(search, 'orWhere', (0, _lodash.isEmpty)(filter));
 
     // Apply sorting
     internals.buildSort(sort);
