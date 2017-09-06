@@ -7,6 +7,7 @@
     "mocha": "--compilers js:babel-core/register --bail test"
   },
   "scripts": {
+    "lint": "eslint src *.js",
     "build": "babel -q -L -D ./src/ --out-dir ./dist/",
     "prepublish": "npm run clean && npm run build",
     "test": "./node_modules/.bin/mocha $npm_package_options_mocha",
@@ -36,6 +37,7 @@
     "babel": "6.5.2",
     "babel-cli": "6.9.0",
     "babel-core": "6.9.1",
+    "babel-eslint": "^7.2.3",
     "babel-plugin-add-module-exports": "0.2.1",
     "babel-plugin-syntax-object-rest-spread": "6.8.0",
     "babel-plugin-transform-object-rest-spread": "6.8.0",
@@ -43,9 +45,11 @@
     "bluebird": "3.4.0",
     "bookshelf": "0.9.5",
     "chai": "3.5.0",
-    "eslint": "2.11.1",
-    "eslint-config-hapi": "9.1.0",
-    "eslint-plugin-hapi": "4.0.0",
+    "eslint": "^4.4.1",
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.3.0",
     "knex": "0.11.5",
     "mocha": "2.5.3",
     "sqlite3": "3.1.4"
