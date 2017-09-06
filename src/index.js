@@ -290,6 +290,10 @@ export default (Bookshelf, options = {}) => {
         // build the filter query
         internals.model.query((qb) => {
           _forEach(filterValues, (value, key) => {
+            let whereMethod = wherePrefix;
+            if (whereMethod === 'orWhere' && _isEmpty(filterValues)) {
+              whereMethod = 'where';
+            }
             // If the value is a filter type
             if (_isObjectLike(value)) {
               // Format column names of filter types
@@ -306,31 +310,29 @@ export default (Bookshelf, options = {}) => {
                   if (operatorName === 'like') {
                     // Need to add double quotes for each table/column name, this is needed if there is a relationship with a capital letter
                     const formatedFieldName = `"${fieldName.replace('.', '"."')}"`;
-                    qb[wherePrefix]((qbWhere) => {
-                      qbWhere[wherePrefix](
-                        Bookshelf.knex.raw(`LOWER(${formatedFieldName}) like LOWER(?)`, [`%${typeValue}%`])
-                      );
-                    });
+                    qb[whereMethod](
+                      Bookshelf.knex.raw(`LOWER(${formatedFieldName}) like LOWER(?)`, [`%${typeValue}%`])
+                    );
                   } else if (operatorName === 'eq') {
                     if (fieldValue) {
-                      qb[wherePrefix](fieldName, '=', fieldValue);
+                      qb[whereMethod](fieldName, '=', fieldValue);
                     } else {
-                      qb[wherePrefix](fieldName, fieldValue);
+                      qb[whereMethod](fieldName, fieldValue);
                     }
                   } else if (operatorName === 'in') {
-                    qb[`${wherePrefix}In`](fieldName, fieldValue);
+                    qb[`${whereMethod}In`](fieldName, fieldValue);
                   } else if (operatorName === 'ne') {
-                    qb[`${wherePrefix}Not`](fieldName, fieldValue);
+                    qb[`${whereMethod}Not`](fieldName, fieldValue);
                   } else if (operatorName === 'notin') {
-                    qb[`${wherePrefix}NotIn`](fieldName, fieldValue);
+                    qb[`${whereMethod}NotIn`](fieldName, fieldValue);
                   } else if (operatorName === 'lt') {
-                    qb[wherePrefix](fieldName, '<', fieldValue);
+                    qb[whereMethod](fieldName, '<', fieldValue);
                   } else if (operatorName === 'gt') {
-                    qb[wherePrefix](fieldName, '>', fieldValue);
+                    qb[whereMethod](fieldName, '>', fieldValue);
                   } else if (operatorName === 'lte') {
-                    qb[wherePrefix](fieldName, '<=', fieldValue);
+                    qb[whereMethod](fieldName, '<=', fieldValue);
                   } else if (operatorName === 'gte') {
-                    qb[wherePrefix](fieldName, '>=', fieldValue);
+                    qb[whereMethod](fieldName, '>=', fieldValue);
                   }
                 }});
               // If the value is an equality filter
